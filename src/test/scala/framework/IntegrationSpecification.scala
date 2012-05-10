@@ -18,7 +18,6 @@ abstract class IntegrationSpecification extends org.specs2.Specification {
     val sep      = sp("file.separator")
     val javaPath = sp("java.home") + sep + "bin" + sep + "java"
     val command  = javaPath + " -cp " + classpath + " " + client.getClass.getCanonicalName.dropRight(1)
-    println(command)
     val proc     = command.run()
     proc.exitValue
   }
