@@ -11,7 +11,7 @@ object clientExitingImmediately extends App {
 }
 
 @RunWith(classOf[JUnitRunner])
-class Specification extends framework.IntegrationSpecification { def is =
+class Specification extends framework.IntegrationSpecification { def is = 
   "when the client ends execution, remaining enqueued events are sent and the server connection is closed gracefully" ! clientShutdownTest ^
   "when the client is killed, remaining enqueued events are sent and the server connection is closed gracefully" ! todo
   
@@ -23,8 +23,5 @@ class Specification extends framework.IntegrationSpecification { def is =
     //shutdown the server
     todo
   } 
-
-//shut down the client
-
 }
 
