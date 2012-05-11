@@ -14,6 +14,7 @@ resolvers ++= Seq(
 libraryDependencies ++= Seq(
   "ch.qos.logback"             % "logback-classic"       % "1.0.2"          % "test",
   "com.bimbr"                  % "clisson-client"        % "0.3.0"          % "test",  
+  "com.typesafe"               % "config"                % "0.4.0"          % "test",  
   "junit"                      % "junit"                 % "4.10"           % "test", 
   "log4j"                      % "log4j"                 % "1.2.16"         % "test",
   "org.slf4j"                  % "slf4j-api"             % "1.6.4"          % "test",
@@ -21,5 +22,7 @@ libraryDependencies ++= Seq(
 )
 
 scalacOptions += "-deprecation"
+
+parallelExecution in Test := false
 
 EclipseKeys.createSrc := EclipseCreateSrc.Default + EclipseCreateSrc.Resource

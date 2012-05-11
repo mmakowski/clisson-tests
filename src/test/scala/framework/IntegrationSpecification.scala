@@ -14,10 +14,12 @@ abstract class IntegrationSpecification extends org.specs2.Specification {
    * runs supplied app in a separate JVM and returns when the app process exits
    */
   def run(client: App): Int = {
+    val clientClass = client.getClass
     import scala.sys.process._
     val sep      = sp("file.separator")
     val javaPath = sp("java.home") + sep + "bin" + sep + "java"
-    val command  = javaPath + " -cp " + classpath + " " + client.getClass.getCanonicalName.dropRight(1)
+    val confProp = "-Dclisson.config=classpath://" + clientClass.getPackage.getName.replace(".", "/") + "/clisson-client.properties"
+    val command  = javaPath + " -cp " + classpath + " " + confProp + " " + clientClass.getCanonicalName.dropRight(1)
     val proc     = command.run()
     proc.exitValue
   }
