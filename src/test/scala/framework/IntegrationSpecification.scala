@@ -9,18 +9,22 @@ abstract class IntegrationSpecification extends org.specs2.Specification {
   // I don't know how to figure out which bundle the library is stored in, so the bundle id is hard coded.
   // See http://scala-ide-portfolio.assembla.com/spaces/scala-ide/tickets/1001022 for background.
   private def ScalaBundleId = "206/1"
-  
+
+  protected val server = new Server(getClass.getPackage)
+    
   /**
    * runs supplied app in a separate JVM and returns when the app process exits
    */
   def run(client: App): Int = {
-    val clientClass = client.getClass
     import scala.sys.process._
-    val sep      = sp("file.separator")
-    val javaPath = sp("java.home") + sep + "bin" + sep + "java"
-    val confProp = "-Dclisson.config=classpath://" + clientClass.getPackage.getName.replace(".", "/") + "/clisson-client.properties"
-    val command  = javaPath + " -cp " + classpath + " " + confProp + " " + clientClass.getCanonicalName.dropRight(1)
-    val proc     = command.run()
+    val sep         = sp("file.separator")
+    val javaPath    = sp("java.home") + sep + "bin" + sep + "java"
+    val clientClass = client.getClass
+    val confProp    = "-Dclisson.config=classpath://" + clientClass.getPackage.getName.replace(".", "/") + "/clisson-client.properties"
+    val classOrObj  = clientClass.getCanonicalName
+    val className   = if (isScalaSingletonObjectName(classOrObj)) classOrObj.dropRight(1) else classOrObj 
+    val command     = javaPath + " -cp " + classpath + " " + confProp + " " + className
+    val proc        = command.run()
     proc.exitValue
   }
 
@@ -42,6 +46,6 @@ abstract class IntegrationSpecification extends org.specs2.Specification {
     } 
   }
   
-  // /home/mmakowski/.eclipse/org.eclipse.platform_3.7.0_155965261/configuration/org.eclipse.osgi/bundles/165/1/.cp/
+  private def isScalaSingletonObjectName(className: String) = className endsWith "$"
 }  
 
