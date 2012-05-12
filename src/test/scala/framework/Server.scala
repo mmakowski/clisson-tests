@@ -3,6 +3,8 @@ package framework
 class Server(specPackage: Package) {
   import scala.sys.process._
   
+  val StartTimeoutMs = 10000
+  
   val testPath = specPackage.getName.replace(".", "/")
   val configPath =  testPath + "/clisson-server.properties"
   var process: Option[Process] = None 
@@ -12,6 +14,7 @@ class Server(specPackage: Package) {
     def noInput(in: java.io.OutputStream) = ()
     def ignoreOutput(out: java.io.InputStream) = ()
     
+    // TODO: capture the output for assertions
     val io = new ProcessIO(noInput, ignoreOutput, ignoreOutput)
     val serverProcess = ("cp -f src/test/scala/" + configPath + " server/") #&& 
                         ("cp -f src/test/scala/" + testPath + "/logback-server.xml server/logback.xml") #&&
@@ -20,9 +23,9 @@ class Server(specPackage: Package) {
     waitUntilStarted
   }
   
-  def stop(): Unit = process match { 
-    case Some(proc) => proc.destroy()
-    case None       => ()
+  def stop(): Unit = {
+    process foreach (_.destroy())
+    process = None
   }
   
   // assumes usage of H2 database
@@ -42,8 +45,17 @@ class Server(specPackage: Package) {
     }
   }
   
-  private def waitUntilStarted() = {
-    // TODO: poll
-    Thread.sleep(5000)
-  }
+  private def waitUntilStarted(): Unit = waitUntilStarted(System.currentTimeMillis())
+  
+  @scala.annotation.tailrec
+  private def waitUntilStarted(waitStartTimeMs: Long): Unit =
+    if (System.currentTimeMillis() - waitStartTimeMs > StartTimeoutMs) {
+      stop()
+      throw new RuntimeException("server has not started in " + StartTimeoutMs + " milliseconds")
+    } else {
+      httpRequest("localhost", 9000, "/favicon.ico") match {
+        case Left(_)  => waitUntilStarted(waitStartTimeMs)
+        case Right(_) => ()
+      }
+    }
 }
