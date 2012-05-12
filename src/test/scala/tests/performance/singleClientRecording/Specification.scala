@@ -4,7 +4,7 @@ import org.junit.runner.RunWith
 import org.specs2.runner.JUnitRunner
 import System.currentTimeMillis
 
-import framework.{ ClientApp, IntegrationSpecification, Server }
+import framework.{ close, ClientApp, IntegrationSpecification, Server }
 
 // this client returns the average messages saved per second (or -1 if any batch timed out) as its exit code 
 object client extends ClientApp {
@@ -34,7 +34,9 @@ object client extends ClientApp {
     var queryTime = None: Option[Long]
     while (!queryTime.isDefined && !timedOut) {
       val queryStartTime = currentTimeMillis()
-      if (trail(msgId).getStatusLine.getStatusCode == 200) queryTime = Some(currentTimeMillis() - queryStartTime)
+      val trailResponse = trail(msgId) 
+      if (trailResponse.getStatusLine.getStatusCode == 200) queryTime = Some(currentTimeMillis() - queryStartTime)
+      close(trailResponse)
       if (!queryTime.isDefined) Thread.sleep(PollDelayMs) // throttle polling
     }
     queryTime

@@ -54,7 +54,7 @@ class Server(specPackage: Package) {
       stop()
       throw new RuntimeException("server has not started in " + StartTimeoutMs + " milliseconds")
     } else {
-      httpRequest("localhost", 9000, "/favicon.ico") match {
+      closed(httpResponse("localhost", 9000, "/favicon.ico")) match {
         case Left(_)  => waitUntilStarted(waitStartTimeMs)
         case Right(_) => ()
       }
