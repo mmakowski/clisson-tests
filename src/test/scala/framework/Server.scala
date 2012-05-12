@@ -1,5 +1,6 @@
 package framework
 
+// FIXME: non-portable
 class Server(specPackage: Package) {
   import scala.sys.process._
   

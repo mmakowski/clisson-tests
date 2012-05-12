@@ -2,6 +2,7 @@ package framework
 
 import System.{ getProperty => sp }
 
+// FIXME: non-portable
 abstract class IntegrationSpecification extends org.specs2.Specification {
   sequential
   
