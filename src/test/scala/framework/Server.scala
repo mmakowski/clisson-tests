@@ -17,8 +17,8 @@ class Server(specPackage: Package) {
     
     // TODO: capture the output for assertions
     val io = new ProcessIO(noInput, ignoreOutput, ignoreOutput)
-    val serverProcess = ("cp -f src/test/scala/" + configPath + " server/") #&& 
-                        ("cp -f src/test/scala/" + testPath + "/logback-server.xml server/logback.xml") #&&
+    val serverProcess = ("cp -f src/test/resources/" + configPath + " server/") #&& 
+                        ("cp -f src/test/resources/" + testPath + "/logback-server.xml server/logback.xml") #&&
                         Process("java -Dlogback.configurationFile=logback.xml -Dhttp.port=9000 -jar clisson-server.jar", cwd = Some(new java.io.File("server"))) run(io)
     process = Some(serverProcess)
     waitUntilStarted
