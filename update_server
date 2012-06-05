@@ -1,0 +1,8 @@
+#!/bin/sh
+
+VERSION=$1
+
+rm -r server
+unzip ../clisson-server/target/clisson-server-$VERSION.zip
+mv clisson-server-$VERSION server
+chmod +x server/clisson-server

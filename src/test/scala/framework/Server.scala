@@ -7,7 +7,7 @@ class Server(specPackage: Package) {
   val StartTimeoutMs = 10000
   
   val testPath = specPackage.getName.replace(".", "/")
-  val configPath =  testPath + "/clisson-server.properties"
+  val configPath =  testPath + "/clisson-server.conf"
   var process: Option[Process] = None 
   
   def start(): Unit = {
@@ -33,8 +33,7 @@ class Server(specPackage: Package) {
   private def deleteDatabase(): Unit = {
     val props = new java.util.Properties
     val config = com.typesafe.config.ConfigFactory.load(configPath)
-    // TODO: why doesn't typesafe-config take care of system property?
-    val dbBase = config.getString("clisson.db.path").replace("${java.io.tmpdir}", System.getProperty("java.io.tmpdir"))
+    val dbBase = config.getString("clisson.db.path")
     deleteIfExists(dbBase + ".h2.db")
     deleteIfExists(dbBase + ".trace.db")
   }
